@@ -35,7 +35,8 @@ var io = require('socket.io')(http).listen(server);
 
 io.on('connection', function(socket){
   console.log('a user connected');
-  socket.on('chat message', function(msg){
+  socket.on('request', function(msg){
+    socket.emit('response', 'Response is:'+msg);
     console.log('message: ' + msg);
   });
   socket.on('disconnect', function(){
