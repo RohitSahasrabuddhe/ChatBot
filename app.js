@@ -1,6 +1,9 @@
 var express = require('express');
 var app = express();
 var mongoose = require('mongoose');
+var PythonShell = require('python-shell');
+
+
 
 var routingController = require('./controllers/routingController');
 
@@ -36,8 +39,23 @@ var io = require('socket.io')(http).listen(server);
 io.on('connection', function(socket){
   console.log('a user connected');
   socket.on('request', function(msg){
-    socket.emit('response', 'Response is:'+msg);
-    console.log('message: ' + msg);
+    //Create response for the requested message
+    var pyshell = new PythonShell('./python/response.py');
+    pyshell.send(msg);
+    pyshell.on('message', function(response){
+      console.log('Response from python script: '+response);
+      socket.emit('response', response);
+    });
+    // end the input stream and allow the process to exit
+    pyshell.end(function (err,code,signal) {
+      if (err) throw err;
+      console.log('The exit code was: ' + code);
+      console.log('The exit signal was: ' + signal);
+      console.log('finished');
+      console.log('finished');
+    });
+
+    
   });
   socket.on('disconnect', function(){
     console.log('user disconnected');
