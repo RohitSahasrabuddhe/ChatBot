@@ -1,4 +1,6 @@
 import sys
+from chatterbot import ChatBot
+
 
 #Read data from stdin
 def read_in():
@@ -8,10 +10,18 @@ def read_in():
 
 def main():
     #get our data as an array from read_in()
-    lines = read_in()
-    lines = 'ABC' + lines
+    request = read_in()
+
+    # Create a new instance of a ChatBot
+    bot = ChatBot(
+    "Terminal",
+    storage_adapter="chatterbot.storage.SQLStorageAdapter",
+    database="./python/database.sqlite3"
+    )
+
+    response = bot.get_response(request)
     #return the sum to the output stream
-    print (lines)
+    print (response)
 
 # Start process
 if __name__ == '__main__':
